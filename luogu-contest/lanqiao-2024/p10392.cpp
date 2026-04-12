@@ -1,64 +1,40 @@
-#include<iostream>
-#include<vector>
-#include<cstring>
-using namespace std;
-#define maxn 100010
-int n,q,c[maxn],d[maxn],fa[maxn];
-vector<int>g[maxn];
-bool vis[25];
-void addedge(int u ,int v){
-    g[u].push_back(v);
-    g[v].push_back(u);
-}
-void dfs(int u){
-    for(int i = 0;i < g[u].size();i++){
-        int v = g[u][i];
-        if(v == fa[u]) continue;
-        fa[v] = u;
-        d[v] = d[u] + 1;
-        dfs(v);
+    #include <iostream>
+    #include <vector>
+    #include <algorithm>
+    #include <string>
+    #include <map>
+    #include <set>
+    #include <queue>
+    #include <stack>
+    #include <cmath>
+    #include <cstring>
+    using namespace std;
+    
+    void solve(){
+        int n,k;
+        cin>>n>>k;
+        vector<int> a(n);
+        vector<int> b(n, -1); 
+        map<int, int> cnt;
+        for(int i=0;i<n;i++) {
+            cin>>a[i];
+            cnt[a[i]] = i;
+        }
+        sort(a.begin(),a.end());
+        reverse(a.begin(), a.end());
+        int i = 0;
+        while(cnt[a[i]] > i && k >= (cnt[a[i]] - i)){
+            k -= (cnt[a[i]] - i);
+            b[i] = a[i];
+            i++;
+        }
+        for(int j=0;j<n;j++){
+            cout<<b[j]<<" ";
+        }
     }
-}
-int query(int u ,int v){
-    memset(vis,0,sizeof(vis));
-    int cnt = 0;
-    if(d[u] < d[v]) swap(u ,v);
-    while(d[u] != d[v]){
-        if(!vis[c[u]])cnt++;
-        vis[c[u]] = 1;
-        u = fa[u];//将 u 调整到与 v 同一深度
-    } 
-    while(u != v){
-        if(!vis[c[u]])cnt++;
-        vis[c[u]] = 1;
-        if(!vis[c[v]])cnt++;
-        vis[c[v]] = 1;
-        u = fa[u];
-        v = fa[v];//同时向上调整 u 和 v，直到它们相等，此时的 u（或 v）就是它们的最近公共祖先 
+    
+    int main(){
+        ios::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+        solve();
+        return 0;
     }
-    // 加上 LCA 节点的零食
-    if (!vis[c[u]]) {
-        vis[c[u]] = 1;
-        cnt++;
-    }
-    return cnt;
-}
-int main(){
-    cin>>n>>q;
-    for(int i = 1;i <= n;i++){
-        cin>>c[i];
-    }
-    for(int i = 1;i < n;i++){
-        int u, v;
-        cin>>u>>v;
-        addedge(u,v);
-    }
-    vis[1] = 1;
-    dfs(1);
-    for(int i = 1;i <= q;i++){
-        int s,t;
-        cin>>s>>t;
-        cout<<query(s,t)<<endl;
-        
-    }
-}
